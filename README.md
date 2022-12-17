@@ -1,1 +1,5 @@
-# advent_of_code_2022
+# Advent of code 2022
+
+Solved in javascript - node.js
+
+Quick and dirty solution.
