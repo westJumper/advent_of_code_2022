@@ -2,4 +2,4 @@
 
 Solved in javascript - node.js
 
-Quick and dirty solution.
+Quick and dirty solution - works like a charm.
