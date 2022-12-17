@@ -66,13 +66,6 @@ reader.on('line', function (line) {
         } else {
             console.log("line not recognized")
         }
-        
-        // // calculate result when on the last line
-        // if(lineCounter == 1079){
-
-            console.log("hello")
-
-        // }
        lineCounter = lineCounter + 1
 
 });

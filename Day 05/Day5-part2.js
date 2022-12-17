@@ -57,9 +57,6 @@ reader.on('line', function (line) {
         var allContainersInCraneArray = []
         for(i=0;i<howManyToMove;i=i+1){
             allContainersInCraneArray.push(fromArray.pop())
-            //toArray.push(poppedContainer)
-            //map.set(fromStack, fromArray)
-            //map.set(toStack, toArray)
         }
 
         map.set(fromStack, fromArray)
