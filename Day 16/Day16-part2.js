@@ -1,15 +1,13 @@
 function parseInput(lines) {
   var valvesMap = new Map();
-  //var valvesMap1 = []
   var valvesFlow = new Map();
-  //var valvesFlow = []
   var valvesList = []
+  var valvesWithFlow = []
 
   lines.forEach(function (line) {
     var currentPosition = line.split(" ")[1];
     var openFlowRate = Number(line.split(";")[0].split("=")[1]);
     var nextPossiblePositions = [];
-    //nextPossiblePositions = line.replace(" valves "," valve ").split(" valves ")[1].split(", ")
     if (line.split(" valves ").length == 1) {
       nextPossiblePositions = [line.split(" valve ")[1]];
     } else {
@@ -19,8 +17,11 @@ function parseInput(lines) {
     valvesMap.set(currentPosition, nextPossiblePositions);
     valvesFlow.set(currentPosition, openFlowRate);
     valvesList.push(currentPosition)
+    if(openFlowRate != 0){
+      valvesWithFlow.push(currentPosition)
+    }
   });
-  return [valvesMap, valvesFlow, valvesList];
+  return [valvesMap, valvesFlow, valvesList, valvesWithFlow];
 }
 
 // this could be possibly enhanced with map of already known positions/distances so that we do not have to repeat it
@@ -99,6 +100,43 @@ const fs = require("fs");
 var inputFile = "input.txt";
 const lines = fs.readFileSync(inputFile, "utf8").split("\r\n");
 
-var [valvesMap, valvesFlow, valvesList] = parseInput(lines);
+var [valvesMap, valvesFlow, valvesList, valvesWithFlow] = parseInput(lines);
 var distancesMap = getDistancesMap(valvesList)
-console.log("Solution to 1: " + dfs(30, "AA", []))
+
+// Solution 2 description (thinking)
+// create and try all different combinations of opening valves for me and elephant
+// when I try one combination elephant tries oposite combination (this means we can only try half of the combinations because other half would be the same just vice versa for me and elephant)
+// if we run this for all possible combination we should find out which combination sums up and gives us maximum possible
+
+// combination approach taken from https://codereview.stackexchange.com/questions/7001/generating-all-combinations-of-an-array
+// I took the question approach because it does not store everything in array and does not do it recursively (this saves space)
+var combination = [];
+var combinationsLenght = Math.pow(2, valvesWithFlow.length) / 2 // we can compare only half of the combinations - explanation above
+var maximum = 0
+console.log("Number of iterations to go through: " + combinationsLenght)
+console.log("-----------------------")
+
+for (var i = 0; i < combinationsLenght ; i++){
+  if(i % 1000 == 0){
+    console.log("After iteration: " + i)
+    console.log("Maximum so far: " + maximum)
+    console.log("------------------------")
+  }  
+  combination= []
+    for (var j=0;j<valvesWithFlow.length;j++) {
+        if ((i & Math.pow(2,j))){ 
+            combination.push(valvesWithFlow[j])
+        }
+    }
+    if (combination !== "") {
+        var opositeCombination = valvesWithFlow.filter( function( el ) { // for each combination create oposite consisting of remaining values
+            return combination.indexOf( el ) < 0;
+        });
+
+        maximum = Math.max(maximum, dfs(26, "AA", combination) + dfs(26, "AA", opositeCombination))
+
+        combination = []
+    }
+}
+
+console.log("Solution to part 2: " + maximum)
